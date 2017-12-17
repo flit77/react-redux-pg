@@ -1,21 +1,30 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from 'react-redux';
+import { createTodo } from './actions/todos';
 
 class App extends Component {
+  _handleChange = e => {
+    e.preventDefault();
+    let item = e.target.querySelector('input').value;
+    this.props.createTodo(item);
+  };
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        <form onSubmit={this._handleChange}>
+          <input type="text" name="listItem" />
+          <button type="submit">button</button>
+        </form>
+        <br />
+        {this.props.todos.map((text, id) => <div key={id}>{text}</div>)}
       </div>
     );
   }
 }
 
-export default App;
+export default connect(
+  state => ({
+    todos: state.todos
+  }),
+  { createTodo }
+)(App);
