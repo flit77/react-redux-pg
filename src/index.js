@@ -18,9 +18,42 @@ const store = createStore(
   compose(window.devToolsExtension ? window.devToolsExtension() : f => f)
 );
 
+const createTodo = text => {
+  return {
+    type: 'CREATE_TODO',
+    text
+  };
+};
+
 class App extends Component {
+  _handleChange = e => {
+    e.preventDefault();
+    let item = e.target.querySelector('input').value;
+    this.props.createTodo(item);
+  };
   render() {
-    return <h1>Hello world</h1>;
+    return (
+      <div>
+        <form onSubmit={this._handleChange}>
+          <input type="text" name="listItem" />
+          <button type="submit">button</button>
+        </form>
+        <br />
+        {this.props.todos.map((text, id) => <div key={id}>{text}</div>)}
+      </div>
+    );
   }
 }
-ReactDOM.render(<App />, document.getElementById('root'));
+const MyApp = connect(
+  state => ({
+    todos: state
+  }),
+  { createTodo }
+)(App);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <MyApp />
+  </Provider>,
+  document.getElementById('root')
+);
